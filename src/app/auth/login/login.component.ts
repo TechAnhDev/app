@@ -4,7 +4,7 @@ import { ServiceService } from '~/app/core/service.service';
 import { ConstantDef } from '~/app/core/constantDef';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-
+declare var $: any;
 @Component({
   selector: 'app-login',
   standalone: false,
@@ -13,6 +13,7 @@ import { Router } from '@angular/router';
 })
 export class LoginComponent {
   loginForm: FormGroup;
+  isChangePos: boolean = false;
   constructor(
     private spinner: NgxSpinnerService,
     private services: ServiceService,
@@ -26,16 +27,19 @@ export class LoginComponent {
   }
 
   ngOnInit() {}
+
   login() {
     if (this.loginForm.valid) {
       const data = {
         username: this.loginForm.value?.username.trim(),
         password: this.loginForm.value?.password.trim(),
       };
+      this.spinner.show();
       this.services.login(data).subscribe(
         (data: any) => {
           if (data.status == ConstantDef.STATUS_SUCCES) {
             this.router.navigate(['/home']);
+            this.spinner.hide();
           }
         },
         (error: any) => {
